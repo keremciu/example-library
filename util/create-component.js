@@ -34,6 +34,12 @@ generatedTemplates.forEach((template) => {
   );
 });
 
+// create index file
+fs.writeFileSync(
+  `${componentDirectory}/index${generatedTemplates[0].extension}`,
+  `export { default } from "./${componentName}";`
+);
+
 console.log(
   "Successfully created component under: " + componentDirectory.green
 );

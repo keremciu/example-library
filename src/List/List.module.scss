@@ -1,0 +1,7 @@
+@import "../variables.scss";
+@import "../typography.scss";
+
+.foo {
+  @include font-defaults;
+  color: var(--text-color);
+}
