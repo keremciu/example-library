@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import List, { TEXTS } from "./List";
 
@@ -28,12 +29,15 @@ const secondDataSet: TSecondDataItem[] = [
 const simpleInfoRendererFunc = (item, key) => <span>{item[key]}</span>;
 
 describe("Test Component", () => {
-  it("should render info list header", () => {
+  const user = userEvent.setup();
+
+  it("should render info list header and no selected item text", () => {
     render(<List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />);
 
     expect(
       screen.getByRole("heading", { level: 3, name: TEXTS.info })
     ).toBeInTheDocument();
+    expect(screen.getByText(TEXTS.noSelectedItem)).toBeInTheDocument();
   });
 
   describe("accepts an array of objects with any structure", () => {
@@ -63,6 +67,46 @@ describe("Test Component", () => {
           screen.queryAllByRole("checkbox", { checked: false })
         ).toHaveLength(secondDataSet.length);
       });
+    });
+  });
+
+  describe("selected items shown on the screen", () => {
+    it("user selects first item and sees 0 in selected items list", async () => {
+      render(
+        <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
+      );
+      expect(screen.getByText(TEXTS.noSelectedItem)).toBeInTheDocument();
+      const firstCheckbox = screen.getByLabelText(firstDataSet[0].title);
+      expect(firstCheckbox).not.toBeChecked();
+      await user.click(firstCheckbox);
+      expect(firstCheckbox).toBeChecked();
+      expect(screen.getByLabelText("selecteditems").innerHTML).toContain("0");
+      expect(
+        screen.getByRole("heading", { level: 2, name: TEXTS.selectedItems })
+      ).toBeInTheDocument();
+    });
+
+    it("user selects more than 1 item and sees their index in selected items list", async () => {
+      render(
+        <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
+      );
+      const secondCheckbox = screen.getByLabelText(firstDataSet[1].title);
+      const thirdCheckbox = screen.getByLabelText(firstDataSet[2].title);
+
+      // check second checkbox
+      expect(secondCheckbox).not.toBeChecked();
+      await user.click(secondCheckbox);
+      expect(secondCheckbox).toBeChecked();
+      expect(
+        screen.getByRole("heading", { level: 2, name: TEXTS.selectedItems })
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText("selecteditems").innerHTML).toContain("1");
+
+      // check third checkbox
+      expect(thirdCheckbox).not.toBeChecked();
+      await user.click(thirdCheckbox);
+      expect(thirdCheckbox).toBeChecked();
+      expect(screen.getByLabelText("selecteditems").innerHTML).toContain("1, 2");
     });
   });
 });

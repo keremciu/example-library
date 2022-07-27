@@ -6,12 +6,18 @@ import styles from "./List.module.scss";
 
 export const TEXTS = {
   info: "Info",
+  selectedItems: "Selected Items:",
+  noSelectedItem: "There is no selected item. Please select an item below.",
 };
 
 const List = <T extends {}>(props: ListProps<T>) => (
   <div className={styles.listContainer}>
-    <div className={styles.selectedItems}>Selected Items</div>
-    <div className={styles.list}>
+    <div className={styles.selectedItems}>
+      <p>{TEXTS.noSelectedItem}</p>
+      <h2>{TEXTS.selectedItems}</h2>
+      <div role="status" aria-live="polite" aria-label="selecteditems"></div>
+    </div>
+    <section className={styles.list} role="list">
       <div className={styles.listHeaders}>
         <h3 className={styles.listHeader}></h3>
         <h3 className={styles.listHeader}>{TEXTS.info}</h3>
@@ -21,7 +27,7 @@ const List = <T extends {}>(props: ListProps<T>) => (
           (key) => key !== "id"
         ) as Array<keyof typeof item>;
         return (
-          <div className={styles.listItem} key={index}>
+          <div role="listitem" className={styles.listItem} key={index}>
             <div className={styles.listItemCell}>
               <label>
                 <input
@@ -43,7 +49,7 @@ const List = <T extends {}>(props: ListProps<T>) => (
           </div>
         );
       })}
-    </div>
+    </section>
   </div>
 );
 
