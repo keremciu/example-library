@@ -25,9 +25,11 @@ const secondDataSet: TSecondDataItem[] = [
   { name: "Name 3", description: "Description 3" },
 ];
 
+const simpleInfoRendererFunc = (item, key) => <span>{item[key]}</span>;
+
 describe("Test Component", () => {
   it("should render info list header", () => {
-    render(<List data={firstDataSet} infoRenderer={() => <span>test</span>} />);
+    render(<List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />);
 
     expect(
       screen.getByRole("heading", { level: 3, name: TEXTS.info })
@@ -38,7 +40,7 @@ describe("Test Component", () => {
     describe("when object has only id and title keys", () => {
       it("should render titles and checkboxes", () => {
         render(
-          <List data={firstDataSet} infoRenderer={() => <span>test</span>} />
+          <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
         );
 
         // put for loop when it passes
@@ -52,16 +54,14 @@ describe("Test Component", () => {
     describe("when object has name, description and link keys", () => {
       it("should render name, description, link with their separate checkboxes", () => {
         render(
-          <List data={secondDataSet} infoRenderer={() => <span>test</span>} />
+          <List data={secondDataSet} infoRenderer={simpleInfoRendererFunc} />
         );
 
         // put for loop when it passes
         expect(screen.getByText(secondDataSet[0].name)).toBeInTheDocument();
         expect(
           screen.queryAllByRole("checkbox", { checked: false })
-        ).toHaveLength(
-          secondDataSet.length * Object.keys(secondDataSet[0]).length
-        );
+        ).toHaveLength(secondDataSet.length);
       });
     });
   });

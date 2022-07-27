@@ -21,21 +21,22 @@ const List = <T extends {}>(props: ListProps<T>) => (
           (key) => key !== "id"
         ) as Array<keyof typeof item>;
         return (
-          <div className={styles.listItem}>
+          <div className={styles.listItem} key={index}>
             <div className={styles.listItemCell}>
               <label>
-              <input type="checkbox" id={`listitem-checkbox-${index}`} value={index} />
+                <input
+                  type="checkbox"
+                  id={`listitem-checkbox-${index}`}
+                  value={index}
+                />
               </label>
             </div>
             <div className={styles.listItemCell}>
               {itemKeys.map((key) => (
-                <div>
-                <label
-                  key={`${String(key)}${index}`}
-                  htmlFor={`listitem-checkbox-${index}`}
-                >
-                  {props.infoRenderer(item, key)}
-                </label>
+                <div key={`${String(key)}${index}`}>
+                  <label htmlFor={`listitem-checkbox-${index}`}>
+                    {props.infoRenderer(item, key)}
+                  </label>
                 </div>
               ))}
             </div>
