@@ -1,12 +1,11 @@
 module.exports = (componentName) => ({
-  content: `// Generated with util/create-component.js
-import React from "react";
+  content: `import React from "react";
 import { render, screen } from "@testing-library/react";
 
 import ${componentName} from "./${componentName}";
 import { ${componentName}Props } from "./${componentName}.types";
 
-describe("Test Component", () => {
+describe("${componentName} Component", () => {
   const setup = (props) => {
     render(<${componentName} {...props} />);
   }
