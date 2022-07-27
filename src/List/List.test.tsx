@@ -1,30 +1,45 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 
-import List from "./List";
-import { ListProps } from "./List.types";
+import List, { TEXTS } from "./List";
 
-const firstDataSet = [
+type TFirstDataItem = {
+  id: number;
+  title: string;
+};
+const firstDataSet: TFirstDataItem[] = [
   { id: 1, title: "Title 1" },
   { id: 2, title: "Title 2" },
   { id: 3, title: "Title 3" },
 ];
 
-const secondDataSet = [
+type TSecondDataItem = {
+  name: string;
+  description: string;
+  link?: string;
+};
+
+const secondDataSet: TSecondDataItem[] = [
   { name: "Name 1", description: "Description 1" },
   { name: "Name 2", description: "Description 2", link: "google.com" },
   { name: "Name 3", description: "Description 3" },
 ];
 
 describe("Test Component", () => {
-  const setup = (props: ListProps) => {
-    render(<List {...props} />);
-  };
+  it("should render info list header", () => {
+    render(<List data={firstDataSet} infoRenderer={() => <span>test</span>} />);
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: TEXTS.info })
+    ).toBeInTheDocument();
+  });
 
   describe("accepts an array of objects with any structure", () => {
     describe("when object has only id and title keys", () => {
       it("should render titles and checkboxes", () => {
-        setup({ data: firstDataSet });
+        render(
+          <List data={firstDataSet} infoRenderer={() => <span>test</span>} />
+        );
 
         // put for loop when it passes
         expect(screen.getByText(firstDataSet[0].title)).toBeInTheDocument();
@@ -35,8 +50,10 @@ describe("Test Component", () => {
     });
 
     describe("when object has name, description and link keys", () => {
-      it("should render name, description and link with their separate checkboxes", () => {
-        setup({ data: secondDataSet });
+      it("should render name, description, link with their separate checkboxes", () => {
+        render(
+          <List data={secondDataSet} infoRenderer={() => <span>test</span>} />
+        );
 
         // put for loop when it passes
         expect(screen.getByText(secondDataSet[0].name)).toBeInTheDocument();
