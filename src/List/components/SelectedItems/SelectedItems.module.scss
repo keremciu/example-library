@@ -1,0 +1,15 @@
+.selectedItems {
+  background: var(--bg-color);
+  padding: 0px 16px;
+  border: 1px solid var(--primary-color);
+}
+
+.selectedItemContainer {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+}
+
+.deselectButton {
+  margin-left: auto;
+}

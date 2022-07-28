@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import List, { TEXTS } from "./List";
+import { TEXTS as SelectedItemsTEXTS } from "./components/SelectedItems/SelectedItems";
 
 type TFirstDataItem = {
   id: number;
@@ -37,7 +38,9 @@ describe("Test Component", () => {
     expect(
       screen.getByRole("heading", { level: 3, name: TEXTS.info })
     ).toBeInTheDocument();
-    expect(screen.getByText(TEXTS.noSelectedItem)).toBeInTheDocument();
+    expect(
+      screen.getByText(SelectedItemsTEXTS.noSelectedItem)
+    ).toBeInTheDocument();
   });
 
   describe("accepts an array of objects with any structure", () => {
@@ -75,14 +78,19 @@ describe("Test Component", () => {
       render(
         <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
       );
-      expect(screen.getByText(TEXTS.noSelectedItem)).toBeInTheDocument();
+      expect(
+        screen.getByText(SelectedItemsTEXTS.noSelectedItem)
+      ).toBeInTheDocument();
       const firstCheckbox = screen.getByLabelText(firstDataSet[0].title);
       expect(firstCheckbox).not.toBeChecked();
       await user.click(firstCheckbox);
       expect(firstCheckbox).toBeChecked();
       expect(screen.getByLabelText("selecteditems").innerHTML).toContain("0");
       expect(
-        screen.getByRole("heading", { level: 2, name: TEXTS.selectedItems })
+        screen.getByRole("heading", {
+          level: 2,
+          name: SelectedItemsTEXTS.selectedItems,
+        })
       ).toBeInTheDocument();
     });
 
@@ -97,16 +105,41 @@ describe("Test Component", () => {
       expect(secondCheckbox).not.toBeChecked();
       await user.click(secondCheckbox);
       expect(secondCheckbox).toBeChecked();
-      expect(
-        screen.getByRole("heading", { level: 2, name: TEXTS.selectedItems })
-      ).toBeInTheDocument();
       expect(screen.getByLabelText("selecteditems").innerHTML).toContain("1");
+      expect(
+        screen.queryByText(SelectedItemsTEXTS.noSelectedItem)
+      ).not.toBeInTheDocument();
 
       // check third checkbox
       expect(thirdCheckbox).not.toBeChecked();
       await user.click(thirdCheckbox);
       expect(thirdCheckbox).toBeChecked();
-      expect(screen.getByLabelText("selecteditems").innerHTML).toContain("1, 2");
+      expect(screen.getByLabelText("selecteditems").innerHTML).toContain(
+        "1, 2"
+      );
+    });
+
+    describe("when user clicks deselect all button", () => {
+      it("user sees no selected item text and checkbox is unchecked", async () => {
+        render(
+          <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
+        );
+        expect(
+          screen.getByText(SelectedItemsTEXTS.noSelectedItem)
+        ).toBeInTheDocument();
+        const firstCheckbox = screen.getByLabelText(firstDataSet[0].title);
+        expect(firstCheckbox).not.toBeChecked();
+        await user.click(firstCheckbox);
+        expect(firstCheckbox).toBeChecked();
+        expect(screen.getByLabelText("selecteditems").innerHTML).toContain("0");
+        expect(
+          screen.queryByText(SelectedItemsTEXTS.noSelectedItem)
+        ).not.toBeInTheDocument();
+        await user.click(screen.getByRole("button", { name: /deselect all/i }));
+        expect(
+          screen.getByText(SelectedItemsTEXTS.noSelectedItem)
+        ).toBeInTheDocument();
+      });
     });
   });
 });

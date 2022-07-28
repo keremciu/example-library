@@ -3,21 +3,23 @@
 
 .listContainer {
   @include font-defaults;
-}
-
-.list {
   width: 320px;
-  border-bottom: 1px solid var(--primary-color);
-  border-radius: 4px;
+
+  .list {
+    border-bottom: 1px solid var(--primary-color);
+    border-radius: 4px;
+  }
 }
 
 .listHeaders {
   display: grid;
   grid-template-columns: 1fr 3fr;
-}
 
-.listHeader {
-  padding-left: 16px;
+  .listHeader {
+    border-right: 1px solid var(--primary-color);
+    padding-left: 16px;
+    margin: 0;
+  }
 }
 
 .listItem {
@@ -27,17 +29,17 @@
   border-bottom: 0px;
   line-height: 36px;
   &:hover {
-    background-color: rgba(0,0,0,.05)
+    background-color: rgba(0, 0, 0, 0.05);
   }
-}
 
-.listItemCell label {
-  padding: 8px 16px;
-  width: 100%;
-  height: 100%;
-  display: block;
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
+  .listItemCell label {
+    padding: 8px 16px;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
