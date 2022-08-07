@@ -69,7 +69,7 @@ Don't forget to add the component to your `index.ts` exports if you want the lib
 Let's say you have another project (`test-app`) on your machine that you want to try installing the component library into without having to first publish the component library. In the `test-app` directory, you can run:
 
 ```
-npm i --save ../react-component-library
+npm i --save ../example-component-library
 ```
 
 which will install the local component library as a dependency in `test-app`. It'll then appear as a dependency in `package.json` like:
@@ -78,7 +78,7 @@ which will install the local component library as a dependency in `test-app`. It
   ...
   "dependencies": {
     ...
-    "react-component-library": "file:../react-component-library",
+    "example-component-library": "file:../example-component-library",
     ...
   },
   ...
@@ -148,12 +148,15 @@ Usage of the component (after the library installed as a dependency into another
 
 ```TSX
 import React from "react";
-import { TestComponent } from "example-component-library";
+import { List } from "example-component-library";
 
 const App = () => (
   <div className="app-container">
     <h1>Hello I'm consuming the example component library</h1>
-    <List theme="primary" />
+    <List<TItem>
+      data={items}
+      infoRenderer={(item, key) => <span>{item[key]}</span>}
+    />
   </div>
 );
 

@@ -1,58 +1,41 @@
-import React, { useRef, ChangeEvent } from "react";
+import React, { useState } from "react";
 
 import { ListProps } from "./List.types";
 
 import styles from "./List.module.scss";
+import VirtualizedList from "./components/VirtualizedList";
 import SelectedItems from "./components/SelectedItems";
 
 export const TEXTS = {
   info: "Info",
 };
 
-type SelectedItemHandle = React.ElementRef<typeof SelectedItems>;
-
 const List = <T extends {}>(props: ListProps<T>) => {
-  const selectedItemsElement = useRef<SelectedItemHandle>(null);
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) =>
-    selectedItemsElement.current?.handleSelection(Number(event.target.value));
+  const [selected, setSelected] = useState<number[]>([]);
+  const handleChange = React.useCallback((selectedNumber: number) =>
+    setSelected((oldSelection: number[]) => {
+      if (oldSelection.includes(selectedNumber)) {
+        return oldSelection.filter((item) => item !== selectedNumber);
+      }
+      return [...oldSelection, selectedNumber].sort((a, b) => a - b);
+    })
+  , [])
+  const handleDeselect = React.useCallback(() => setSelected([]), [])
 
   return (
     <div className={styles.listContainer}>
-      <SelectedItems ref={selectedItemsElement} />
+      <SelectedItems selected={selected} handleDeselect={handleDeselect} />
       <section className={styles.list} role="list">
         <div className={styles.listHeaders}>
           <h3 className={styles.listHeader}></h3>
           <h3 className={styles.listHeader}>{TEXTS.info}</h3>
         </div>
-        {props.data.map((item, index) => {
-          const itemKeys = Object.keys(item).filter(
-            (key) => key !== "id"
-          ) as Array<keyof typeof item>;
-          return (
-            <div role="listitem" className={styles.listItem} key={index}>
-              <div className={styles.listItemCell}>
-                <label>
-                  <input
-                    type="checkbox"
-                    id={`listitem-checkbox-${index}`}
-                    name="listitem-checkbox"
-                    value={index}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
-              <div className={styles.listItemCell}>
-                {itemKeys.map((key) => (
-                  <div key={`${String(key)}${index}`}>
-                    <label htmlFor={`listitem-checkbox-${index}`}>
-                      {props.infoRenderer(item, key)}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+        <VirtualizedList<T>
+          data={props.data}
+          infoRenderer={props.infoRenderer}
+          selectedItems={selected}
+          onSelectItem={handleChange}
+        />
       </section>
     </div>
   );

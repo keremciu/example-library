@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import List, { TEXTS } from "./List";
+import type { ListProps } from "./List.types";
 import { TEXTS as SelectedItemsTEXTS } from "./components/SelectedItems/SelectedItems";
 
 type TFirstDataItem = {
@@ -27,13 +28,21 @@ const secondDataSet: TSecondDataItem[] = [
   { name: "Name 3", description: "Description 3" },
 ];
 
-const simpleInfoRendererFunc = (item, key) => <span>{item[key]}</span>;
+const simpleInfoRendererFunc: ListProps<TFirstDataItem | TSecondDataItem>["infoRenderer"] = (
+  item,
+  key
+) => <span>{item[key]}</span>;
 
 describe("Test Component", () => {
   const user = userEvent.setup();
 
   it("should render info list header and no selected item text", () => {
-    render(<List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />);
+    render(
+      <List<TFirstDataItem>
+        data={firstDataSet}
+        infoRenderer={simpleInfoRendererFunc}
+      />
+    );
 
     expect(
       screen.getByRole("heading", { level: 3, name: TEXTS.info })
@@ -61,7 +70,10 @@ describe("Test Component", () => {
     describe("when object has name, description and link keys", () => {
       it("should render name, description, link with their separate checkboxes", () => {
         render(
-          <List data={secondDataSet} infoRenderer={simpleInfoRendererFunc} />
+          <List<TSecondDataItem>
+            data={secondDataSet}
+            infoRenderer={simpleInfoRendererFunc}
+          />
         );
 
         // put for loop when it passes
@@ -76,7 +88,10 @@ describe("Test Component", () => {
   describe("selected items shown on the screen", () => {
     it("user selects first item and sees 0 in selected items list", async () => {
       render(
-        <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
+        <List<TFirstDataItem>
+          data={firstDataSet}
+          infoRenderer={simpleInfoRendererFunc}
+        />
       );
       expect(
         screen.getByText(SelectedItemsTEXTS.noSelectedItem)
@@ -96,7 +111,10 @@ describe("Test Component", () => {
 
     it("user selects more than 1 item and sees their index in selected items list", async () => {
       render(
-        <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
+        <List<TFirstDataItem>
+          data={firstDataSet}
+          infoRenderer={simpleInfoRendererFunc}
+        />
       );
       const secondCheckbox = screen.getByLabelText(firstDataSet[1].title);
       const thirdCheckbox = screen.getByLabelText(firstDataSet[2].title);
@@ -122,7 +140,10 @@ describe("Test Component", () => {
     describe("when user clicks deselect all button", () => {
       it("user sees no selected item text and checkbox is unchecked", async () => {
         render(
-          <List data={firstDataSet} infoRenderer={simpleInfoRendererFunc} />
+          <List<TFirstDataItem>
+            data={firstDataSet}
+            infoRenderer={simpleInfoRendererFunc}
+          />
         );
         expect(
           screen.getByText(SelectedItemsTEXTS.noSelectedItem)
